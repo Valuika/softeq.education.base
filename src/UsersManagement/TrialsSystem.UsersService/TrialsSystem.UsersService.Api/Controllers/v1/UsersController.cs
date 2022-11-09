@@ -45,6 +45,12 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
             return Ok(response);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(GetUserResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -52,10 +58,15 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
             [FromRoute] string userId,
             [FromRoute] string id)
         {
+            var response = await _mediator.Send(new UserQuery(userId, id));
             return Ok();
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(typeof(CreateUserResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -72,20 +83,41 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
             return Ok(response);
 
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(UpdateUserResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutAsync(string id, UpdateUserRequest request)
         {
-            return Ok();
-        }
+            var response = _mediator.Send(new UpdateUserCommand
+                (
+                id,
+                request.Name,
+                request.Surname,
+                request.CityId,
+                request.BirthDate,
+                request.Weight,
+                request.Height)
+                );
 
+            return Ok(response);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteAsync(string Id)
+        public async Task<IActionResult> DeleteAsync(string id)
         {
+            await _mediator.Send(new DeleteUserCommand(id));
             return Ok();
         }
     }
